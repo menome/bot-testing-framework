@@ -1,9 +1,9 @@
 pipeline {
   agent any
   stages {
-    stage('error') {
+    stage('test') {
       steps {
-        sh './gradlew :cleanTest :test --tests "com.menome.test.DataRefinerySpecification"'
+        sh './gradlew :cleanTest :test --tests "com.menome.test.DataRefinerySpecification" --debug'
       }
     }
   }
