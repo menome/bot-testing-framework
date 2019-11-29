@@ -30,7 +30,6 @@ class DataRefinerySpecification extends TestContainerSpecification {
                 .withNetwork(network)
                 .withNetworkAliases("datarefinery-bot")
                 .withCopyFileToContainer(MountableFile.forHostPath(new File("src/test/resources/config/config.json.template").getPath()), "/srv/app/config/config.json")
-                .withFileSystemBind("/home/todd/proj/dataRefinery", "/srv/app", BindMode.READ_WRITE)
 
         dataRefineryBotContainer.start()
 
