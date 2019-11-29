@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('test') {
       steps {
-        sh './gradlew :cleanTest :test --tests "com.menome.test.DataRefinerySpecification" --debug'
+        sh './gradlew :cleanTest :test --tests "com.menome.test.*"'
       }
     }
   }
