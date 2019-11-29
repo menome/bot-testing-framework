@@ -1,0 +1,36 @@
+{
+  "port": 7687,
+  "neo4j": {
+    "enable": true,
+    "url": "bolt://neo4j",
+    "user": "neo4j",
+    "pass": "password"
+  },
+  "rabbit": {
+    "enable": true,
+    "url": "amqp://menome:menome@rabbitmq:5672?heartbeat=3600",
+    "routingKey": "fpp.thumbnail",
+    "exchange": "fpp",
+    "exchangeType": "topic"
+  },
+  "rabbit_outgoing": {
+    "url": "amqp://menome:menome@rabbitmq:5672?heartbeat=3600",
+    "routingKey": "fpp",
+    "exchange": "fpp",
+    "exchangeType": "topic"
+  },
+  "librarian": {
+    "enable": true,
+    "host": "http://librarian:80",
+    "username": "botuser",
+    "password": "UzTSy9zp46kKhTT6"
+  },
+  "downstream_actions": {
+    "success": false,
+    "error": false
+  },
+  "thumbnailLibrary": "webdav",
+  "thumbnailPrefix": "",
+  "paginate": true,
+  "generateHighRes": true
+}

@@ -1,1 +1,11 @@
-# bot-testing-framework
+# Menome Bot Testing Framework
+
+This project is used to test menome bots. It can be used locally to enable local testing as well on the CI server.
+
+The project makes heavy use of the testcontainers project (https://www.testcontainers.org/) for spinning up docker containers in the test environment
+Tests are written using the Spock (http://spockframework.org/) BDD testing framework and Groovy (http://groovy-lang.org/)
+
+## Hints
+
+
+##Local Setup

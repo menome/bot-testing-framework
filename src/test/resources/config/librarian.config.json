@@ -1,0 +1,34 @@
+{
+  "name": "File Librarian",
+  "desc": "Backend-agnostic file fetcher.",
+  "logging": true,
+  "port": 3000,
+  "librarian": {
+    "jwtSecret": "nice web mister crack spider",
+    "user": "botuser",
+    "password": "UzTSy9zp46kKhTT6"
+  },
+  "ssl": {
+    "enable": false,
+    "certpath": "/srv/app/ssl/cert.pem",
+    "keypath": "/srv/app/ssl/key.pem",
+    "port": 443
+  },
+  "connections": [
+    {
+      "connection_type": "webdav",
+      "connection_libraryname": "webdav",
+      "host": "http://webdav",
+      "username": "menome",
+      "password": "menome"
+    },
+    {
+      "connection_type": "minio",
+      "connection_libraryname": "miniofiles",
+      "useSSL": false,
+      "host": "localhost",
+      "accesskey": "abcd123",
+      "secretkey": "abcd12345"
+    }
+  ]
+}
