@@ -9,4 +9,4 @@ TODO:Examples
 TODO:Running test locally (Docker and standalone)
 TODO:Debugging hints
 
-
+Make sure that the user Jenkins is running as (usually jenkins) has a valid docker login, and the permissions necessary to pull containers.
