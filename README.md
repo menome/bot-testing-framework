@@ -5,7 +5,8 @@ This project is used to test menome bots. It can be used locally to enable local
 The project makes heavy use of the testcontainers project (https://www.testcontainers.org/) for spinning up docker containers in the test environment
 Tests are written using the Spock (http://spockframework.org/) BDD testing framework and Groovy (http://groovy-lang.org/)
 
-## Hints
+TODO:Examples
+TODO:Running test locally (Docker and standalone)
+TODO:Debugging hints
 
 
-##Local Setup
