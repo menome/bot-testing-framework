@@ -22,13 +22,14 @@ import java.util.concurrent.TimeUnit
 
 abstract class TestContainerSpecification extends Specification {
 
-    static Logger log = LoggerFactory.getLogger(ThumbnailBotSpecification.class)
+    static Logger log = LoggerFactory.getLogger(TestContainerSpecification.class)
 
     static final int RABBITMQ_PORT = 5672
     static final int RABBITMQ_MANAGEMENT_PORT = 15672
     static final int NEO4J_BOLT_API_PORT = 7687
     static final int NEO4J_WEB_PORT = 7474
     static final int LIBRARIAN_PORT = 80
+
 
     protected GenericContainer createAndStartRabbitMQContainer(Network network) {
         GenericContainer rabbitMQContainer = new GenericContainer("rabbitmq:management-alpine")
@@ -62,12 +63,14 @@ abstract class TestContainerSpecification extends Specification {
         return rabbitChannel
     }
 
-    protected GenericContainer createAndStartNeo4JContainer(Network network){
-        GenericContainer neo4JContainer = new Neo4jContainer("neo4j:3.5.8")
+    protected GenericContainer createAndStartNeo4JContainer(Network network) {
+        GenericContainer neo4JContainer = new Neo4jContainer("menome/thelink-neo4j-main:version-3.5.11")
                 .withNetwork(network)
                 .withNetworkAliases("neo4j")
                 .withExposedPorts(NEO4J_WEB_PORT)
                 .withExposedPorts(NEO4J_BOLT_API_PORT)
+                .withEnv("NEO4J_ACCEPT_LICENSE_AGREEMENT", "yes")
+
 
         neo4JContainer.start()
 
@@ -77,10 +80,10 @@ abstract class TestContainerSpecification extends Specification {
         return neo4JContainer
     }
 
-    protected Driver openNeo4JDriver(GenericContainer neo4JContainer){
+    protected Driver openNeo4JDriver(GenericContainer neo4JContainer) {
         String boltPort = neo4JContainer.getMappedPort(NEO4J_BOLT_API_PORT) as String
         String boltURL = "bolt://localhost:$boltPort"
-        return  GraphDatabase.driver(boltURL, AuthTokens.basic("neo4j", "password"));
+        return GraphDatabase.driver(boltURL, AuthTokens.basic("neo4j", "password"));
     }
 
 
@@ -99,7 +102,7 @@ abstract class TestContainerSpecification extends Specification {
 
         log.info "Librarian -  http://localhost:${librarianContainer.getMappedPort(LIBRARIAN_PORT)}"
 
-        return  librarianContainer
+        return librarianContainer
 
     }
 
@@ -110,7 +113,7 @@ abstract class TestContainerSpecification extends Specification {
         consumer.waitUntil({ frame -> frame.getUtf8String().contains(entry) }, 30, log.isDebugEnabled() ? TimeUnit.MINUTES : TimeUnit.SECONDS)
     }
 
-    protected void keepContainersRunningFor10Minutes(){
+    protected void keepContainersRunningFor10Minutes() {
         log.info("**** Test pausing for 10 minutes ****")
         sleep(600000)
     }
