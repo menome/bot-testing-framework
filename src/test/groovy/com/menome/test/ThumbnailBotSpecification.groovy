@@ -4,14 +4,10 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.Network
-import org.testcontainers.containers.output.OutputFrame
-import org.testcontainers.containers.output.WaitingConsumer
 import org.testcontainers.utility.MountableFile
-import spock.lang.Ignore
 import spock.lang.Shared
 
 import javax.imageio.ImageIO
-import java.util.concurrent.TimeUnit
 
 class ThumbnailBotSpecification extends TestContainerSpecification {
 
@@ -75,7 +71,7 @@ class ThumbnailBotSpecification extends TestContainerSpecification {
 
     def "test create thumbnail with valid pdf file"() {
         given:
-        def neo4jDriver = openNeo4JDriver(neo4JContainer)
+        def neo4jDriver = Neo4J.openDriver(neo4JContainer)
         def session = neo4jDriver.session()
         def rabbitChannel = openRabbitMQChanel(rabbitMQContainer, RABBITMQ_QUEUE_NAME, RABBITMQ_TEST_EXCHANGE, RABBITMQ_TEST_ROUTING_KEY)
         def fileToProcess = "valid.pdf"

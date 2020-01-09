@@ -3,7 +3,6 @@ package com.menome.test
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.testcontainers.containers.BindMode
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.Network
 import org.testcontainers.utility.MountableFile
@@ -40,7 +39,7 @@ class DataRefinerySpecification extends TestContainerSpecification {
     def "test data refinery with example message"() {
         given:
         def dataRefineryContainer = createAndStartDataRefineryContainer(network)
-        def neo4jDriver = openNeo4JDriver(neo4JContainer)
+        def neo4jDriver = Neo4J.openDriver(neo4JContainer)
         def neo4Jsession = neo4jDriver.session()
         def routingKey = "syncevents.harvester.updates.*"
         def queue = "refineryQueue"

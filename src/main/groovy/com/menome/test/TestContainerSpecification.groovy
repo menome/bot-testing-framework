@@ -3,9 +3,6 @@ package com.menome.test
 import com.rabbitmq.client.Channel
 import com.rabbitmq.client.Connection
 import com.rabbitmq.client.ConnectionFactory
-import org.neo4j.driver.v1.AuthTokens
-import org.neo4j.driver.v1.Driver
-import org.neo4j.driver.v1.GraphDatabase
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.testcontainers.containers.GenericContainer
@@ -31,7 +28,7 @@ abstract class TestContainerSpecification extends Specification {
     static final int LIBRARIAN_PORT = 80
 
 
-    protected GenericContainer createAndStartRabbitMQContainer(Network network) {
+    protected static GenericContainer createAndStartRabbitMQContainer(Network network) {
         GenericContainer rabbitMQContainer = new GenericContainer("rabbitmq:management-alpine")
                 .withNetwork(network)
                 .withNetworkAliases("rabbitmq")
@@ -47,7 +44,7 @@ abstract class TestContainerSpecification extends Specification {
         return rabbitMQContainer
     }
 
-    protected Channel openRabbitMQChanel(GenericContainer rabbitMQContainer, String queue, String exchange, String routingKey) {
+    protected static Channel openRabbitMQChanel(GenericContainer rabbitMQContainer, String queue, String exchange, String routingKey) {
         ConnectionFactory rabbitConnectionFactory = new ConnectionFactory()
         rabbitConnectionFactory.host = rabbitMQContainer.containerIpAddress
         rabbitConnectionFactory.port = rabbitMQContainer.getMappedPort(RABBITMQ_PORT)
@@ -63,7 +60,7 @@ abstract class TestContainerSpecification extends Specification {
         return rabbitChannel
     }
 
-    protected GenericContainer createAndStartNeo4JContainer(Network network) {
+    protected static GenericContainer createAndStartNeo4JContainer(Network network) {
         GenericContainer neo4JContainer = new Neo4jContainer("menome/thelink-neo4j-main:version-3.5.11")
                 .withNetwork(network)
                 .withNetworkAliases("neo4j")
@@ -80,11 +77,6 @@ abstract class TestContainerSpecification extends Specification {
         return neo4JContainer
     }
 
-    protected Driver openNeo4JDriver(GenericContainer neo4JContainer) {
-        String boltPort = neo4JContainer.getMappedPort(NEO4J_BOLT_API_PORT) as String
-        String boltURL = "bolt://localhost:$boltPort"
-        return GraphDatabase.driver(boltURL, AuthTokens.basic("neo4j", "password"));
-    }
 
 
     GenericContainer createAndStartLibrarianContainer(Network network) {
@@ -106,14 +98,14 @@ abstract class TestContainerSpecification extends Specification {
 
     }
 
-    protected void waitForContainerLogEntry(GenericContainer container, String entry) {
+    protected static void waitForContainerLogEntry(GenericContainer container, String entry) {
         log.debug("Waiting on container $container.containerInfo.config.image for message '$entry'")
         WaitingConsumer consumer = new WaitingConsumer()
         container.followOutput(consumer, OutputFrame.OutputType.STDOUT)
         consumer.waitUntil({ frame -> frame.getUtf8String().contains(entry) }, 30, log.isDebugEnabled() ? TimeUnit.MINUTES : TimeUnit.SECONDS)
     }
 
-    protected void keepContainersRunningFor10Minutes() {
+    protected static void keepContainersRunningFor10Minutes() {
         log.info("**** Test pausing for 10 minutes ****")
         sleep(600000)
     }
