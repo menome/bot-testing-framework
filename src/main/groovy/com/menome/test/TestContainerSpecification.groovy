@@ -15,6 +15,7 @@ import org.testcontainers.utility.MountableFile
 import spock.lang.Specification
 
 import java.time.Duration
+import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 
 abstract class TestContainerSpecification extends Specification {
@@ -78,7 +79,6 @@ abstract class TestContainerSpecification extends Specification {
     }
 
 
-
     GenericContainer createAndStartLibrarianContainer(Network network) {
         GenericContainer librarianContainer = new GenericContainer("menome/file-librarian:latest")
                 .withNetworkAliases("librarian")
@@ -98,15 +98,21 @@ abstract class TestContainerSpecification extends Specification {
 
     }
 
-    protected static void waitForContainerLogEntry(GenericContainer container, String entry) {
+    protected static void waitForContainerLogEntry(GenericContainer container, String entry, Duration durationToWait) {
         log.debug("Waiting on container $container.containerInfo.config.image for message '$entry'")
         WaitingConsumer consumer = new WaitingConsumer()
         container.followOutput(consumer, OutputFrame.OutputType.STDOUT)
-        consumer.waitUntil({ frame -> frame.getUtf8String().contains(entry) }, 30, log.isDebugEnabled() ? TimeUnit.MINUTES : TimeUnit.SECONDS)
+
+        consumer.waitUntil({ frame -> frame.getUtf8String().contains(entry) }, durationToWait.get(ChronoUnit.SECONDS).intValue(), TimeUnit.SECONDS)
+    }
+
+    protected static void waitForContainerLogEntry(GenericContainer container, String entry) {
+        waitForContainerLogEntry(container, entry, Duration.of(30, (log.isDebugEnabled() ? ChronoUnit.MINUTES : ChronoUnit.SECONDS)))
     }
 
     protected static void keepContainersRunningFor10Minutes() {
         log.info("**** Test pausing for 10 minutes ****")
         sleep(600000)
     }
+
 }
