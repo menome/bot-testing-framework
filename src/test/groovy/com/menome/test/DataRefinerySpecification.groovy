@@ -1,28 +1,14 @@
 package com.menome.test
 
-
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.Network
 import org.testcontainers.utility.MountableFile
-import spock.lang.Shared
 
-class DataRefinerySpecification extends TestContainerSpecification {
+class DataRefinerySpecification extends MenomeContainerSpecification {
 
     static Logger log = LoggerFactory.getLogger(DataRefinerySpecification.class)
-
-    @Shared
-    Network network = Network.newNetwork()
-    @Shared
-    GenericContainer rabbitMQContainer
-    @Shared
-    GenericContainer neo4JContainer
-
-    def setupSpec() {
-        rabbitMQContainer = createAndStartRabbitMQContainer(network)
-        neo4JContainer = createAndStartNeo4JContainer(network)
-    }
 
     GenericContainer createAndStartDataRefineryContainer(Network network) {
         def dataRefineryBotContainer = new GenericContainer("menome/datarefinery:latest")
@@ -33,14 +19,11 @@ class DataRefinerySpecification extends TestContainerSpecification {
         dataRefineryBotContainer.start()
 
         return dataRefineryBotContainer
-
     }
 
-    def "test data refinery with example message"() {
+    def "test Konrad Employee node created"() {
         given:
         def dataRefineryContainer = createAndStartDataRefineryContainer(network)
-        def neo4jDriver = Neo4J.openDriver(neo4JContainer)
-        def neo4Jsession = neo4jDriver.session()
         def routingKey = "syncevents.harvester.updates.*"
         def queue = "refineryQueue"
         def exchange = "syncevents"
@@ -53,12 +36,11 @@ class DataRefinerySpecification extends TestContainerSpecification {
         then:
         waitForContainerLogEntry(dataRefineryContainer, "Success for Employee message: Konrad Aust")
 
+        expect:
+        assertOneResultWithATrueValue("match(s:Employee{Name:'Konrad Aust'}) return count(s) =1")
+
         cleanup:
-        rabbitChannel.close()
-        neo4Jsession.close()
-        neo4jDriver.close()
         dataRefineryContainer.stop()
-
+        rabbitChannel.close()
     }
-
 }
